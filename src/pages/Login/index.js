@@ -2,10 +2,17 @@ import { Card, Input, Button, Checkbox, Form } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import './index.scss'
 export default function Login() {
+  const onFinish = (values) => {
+    console.log('onFinsh', values)
+  }
   return (
     <div className="login">
       <Card className="login-wrapper" title="极客园" bordered={false}>
-        <Form size="large" validateTrigger={['onBlur', 'onChange']}>
+        <Form
+          size="large"
+          validateTrigger={['onBlur', 'onChange']}
+          onFinish={onFinish}
+        >
           <Form.Item
             name="mobile"
             rules={[
@@ -46,7 +53,7 @@ export default function Login() {
               maxLength={6}
             />
           </Form.Item>
-          <Form.Item valuePropName="checked">
+          <Form.Item valuePropName="checked" name="remember">
             <Checkbox>我已阅读并同意「用户协议」和「隐私条款」</Checkbox>
           </Form.Item>
           <Form.Item>
