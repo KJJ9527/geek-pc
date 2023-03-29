@@ -1,0 +1,17 @@
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: rgb(240, 242, 245);
+  .login-wrapper {
+    width: 500px;
+  }
+  .ant-card-head {
+    text-align: center;
+    font-size: 26px;
+  }
+  .ant-card-body {
+    line-height: 300px;
+  }
+}
