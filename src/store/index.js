@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import rootReducer from './reducers'
-const initialState = { login: localStorage.getItem('geek-pc-token') }
+import { getToken } from '@/utils/token'
+const initialState = {login:getToken()}
 const store = configureStore({
   reducer: rootReducer,
   preloadedState: initialState,

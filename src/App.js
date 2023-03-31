@@ -7,6 +7,7 @@ import {
 import Layout from '@/pages/Layout'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
+import { AuthRoute } from './components/AuthRoute'
 import 'antd/dist/reset.css'
 import './App.scss'
 export default function App() {
@@ -15,7 +16,8 @@ export default function App() {
       <div className="app">
         <Switch>
           <Route path="/" exact render={() => <Redirect to="/home" />} />
-          <Route path="/home" component={Layout} />
+          {/* <Route path="/home" component={Layout} /> */}
+          <AuthRoute path="/home" component={Layout} />
           <Route path="/login" component={Login} />
           {/* 404 */}
           <Route>

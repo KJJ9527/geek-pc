@@ -1,17 +1,27 @@
 import { Card, Input, Button, Checkbox, Form, message } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { login } from '@/store/actions'
 import './index.scss'
 export default function Login() {
   const dispatch = useDispatch()
   const history = useHistory()
-  const onFinish = (values) => {
-    dispatch(login({ mobile: values.mobile, code: values.code }))
-    message.success('登录成功！', 1.5, () => {
-      history.replace('/home')
-    })
+  const location = useLocation()
+  const onFinish = async (values) => {
+    try {
+      await dispatch(login({ mobile: values.mobile, code: values.code }))
+      message.success('登录成功！', 1.5, () => {
+        history.replace(location?.state?.from ?? '/home')
+      })
+    } catch (e) {
+      message.warning(
+        e.response
+          ? e.response?.data?.message ?? '出错了~'
+          : '网络繁忙，请稍后再试',
+        1.5
+      )
+    }
   }
   return (
     <div className="login">
