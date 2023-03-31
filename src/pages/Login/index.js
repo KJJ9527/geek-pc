@@ -1,9 +1,17 @@
-import { Card, Input, Button, Checkbox, Form } from 'antd'
+import { Card, Input, Button, Checkbox, Form, message } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { login } from '@/store/actions'
 import './index.scss'
 export default function Login() {
+  const dispatch = useDispatch()
+  const history = useHistory()
   const onFinish = (values) => {
-    console.log('onFinsh', values)
+    dispatch(login({ mobile: values.mobile, code: values.code }))
+    message.success('登录成功！', 1.5, () => {
+      history.replace('/home')
+    })
   }
   return (
     <div className="login">

@@ -1,2 +1,1 @@
-const actions = () => ({})
-export default actions
+export * from './login'

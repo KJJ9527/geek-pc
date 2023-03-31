@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import reducer from './reducers'
-// 导入redux中间件
-// import thunk from 'redux-thunk'
+import rootReducer from './reducers'
+const initialState = { login: localStorage.getItem('geek-pc-token') }
 const store = configureStore({
-  reducer,
+  reducer: rootReducer,
+  preloadedState: initialState,
 })
 export default store
