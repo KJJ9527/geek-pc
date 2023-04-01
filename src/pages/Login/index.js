@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import { login } from '@/store/actions'
-import './index.scss'
+import styles from './index.module.scss'
 export default function Login() {
   const dispatch = useDispatch()
   const history = useHistory()
@@ -24,7 +24,7 @@ export default function Login() {
     }
   }
   return (
-    <div className="login">
+    <div className={styles.root}>
       <Card className="login-wrapper" title="极客园" bordered={false}>
         <Form
           size="large"
@@ -71,7 +71,7 @@ export default function Login() {
               maxLength={6}
             />
           </Form.Item>
-          <Form.Item valuePropName="checked" name="remember">
+          <Form.Item valuePropName="checked">
             <Checkbox>我已阅读并同意「用户协议」和「隐私条款」</Checkbox>
           </Form.Item>
           <Form.Item>

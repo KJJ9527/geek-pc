@@ -1,10 +1,11 @@
 const initialState = ''
-const login = (state = initialState, action) => {
+export const login = (state = initialState, action) => {
   switch (action.type) {
-    case 'login/setLogin':
-      return (state = action.payload)
+    case 'login/setToken':
+      return action.payload
+    case 'login/clearToken':
+      return initialState
     default:
       return state
   }
 }
-export default login
