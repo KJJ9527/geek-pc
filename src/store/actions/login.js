@@ -2,7 +2,7 @@ import { http, setToken } from '@/utils'
 import { removeToken } from '@/utils'
 export const login = (loginData) => {
   return async (dispatch) => {
-    const res = await http.post('/v1_0/authorizations', loginData)
+    const res = await http.post('/authorizations', loginData)
     const {
       data: { token },
       message,
