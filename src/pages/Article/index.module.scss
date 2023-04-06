@@ -1,0 +1,17 @@
+.root {
+  :global {
+    .filter {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding:0 30px;
+      height: 260px;
+      .filterBtn {
+        width: 70px;
+      }
+    }
+    .table {
+      margin-top: 40px;
+    }
+  }
+}

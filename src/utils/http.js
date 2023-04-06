@@ -18,6 +18,11 @@ http.interceptors.request.use((config) => {
 
 // 响应拦截器
 http.interceptors.response.use(undefined, (error) => {
+  // 网络超时
+  if (!error.response) {
+    message.warning('网络繁忙，请稍后再试！')
+    return Promise.reject(error)
+  }
   // 响应失败，会执行此处的回调函数
   if (error.response.status === 401) {
     message.warning('登录超时，请重新登录！', 1.5)

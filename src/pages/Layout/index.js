@@ -86,16 +86,12 @@ export default function GeekLayout() {
             </Popconfirm>
           </div>
         </Header>
-        <Content
-          style={{
-            margin: '24px 16px 0',
-          }}
-        >
+        <Content>
           <div
             style={{
               padding: 24,
               minHeight: 360,
-              background: colorBgContainer,
+              // background: colorBgContainer,
             }}
           >
             <Route exact path="/home" component={Home} />
