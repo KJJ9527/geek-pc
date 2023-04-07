@@ -15,14 +15,28 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './index.module.scss'
 import img404 from '@/assets/eroor.png'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getChannels, getArticles } from '@/store/actions'
+// 优化文章状态的处理
+const ArticleStatus = {
+  0: { color: 'yellow', text: '草稿' },
+  1: { color: '#ccc', text: '待审核' },
+  2: { color: 'green', text: '审核通过' },
+  3: { color: 'red', text: '审核失败' },
+}
 export default function Article() {
-  const [value, setValue] = useState(0)
+  const dispatch = useDispatch()
+  const { channels, page, pageSize, list, total } = useSelector(
+    (state) => state.article
+  )
+  const [value, setValue] = useState(-1)
   const columns = [
     {
       title: '封面',
       dataIndex: 'cover',
       render: (cover) => {
-        return <img src={cover || img404} width={200} height={150} alt="" />
+        return <img src={cover ?? img404} width={200} height={150} alt="" />
       },
     },
     {
@@ -31,30 +45,27 @@ export default function Article() {
     },
     {
       title: '状态',
-      dataIndex: 'state',
-      render: (_, { tag }) => {
-        return (
-          <>
-            <Tag key={tag}>{tag}</Tag>
-          </>
-        )
+      dataIndex: 'status',
+      render: (status) => {
+        const tagData = ArticleStatus[status]
+        return <Tag color={tagData.color}>{tagData.text}</Tag>
       },
     },
     {
       title: '发布时间',
-      dataIndex: 'pubTime',
+      dataIndex: 'pubdate',
     },
     {
       title: '阅读数',
-      dataIndex: 'read',
+      dataIndex: 'read_count',
     },
     {
       title: '评论数',
-      dataIndex: 'comment',
+      dataIndex: 'comment_count',
     },
     {
       title: '点赞数',
-      dataIndex: 'agree',
+      dataIndex: 'like_count',
     },
     {
       title: '操作',
@@ -66,29 +77,16 @@ export default function Article() {
       ),
     },
   ]
-  const data = [
-    {
-      id: '8547',
-      cover: 'http://geek.itheima.net/resources/images/10.jpg',
-      title: '我是标题',
-      tag: '审核通过',
-      pubTime: '2023/04/06',
-      read: 200,
-      comment: 100,
-      agree: 50,
-    },
-  ]
-
   const { RangePicker } = DatePicker
+  useEffect(() => {
+    dispatch(getChannels())
+    dispatch(getArticles({}))
+  }, [dispatch])
   const radioOnChange = (e) => {
-    console.log('radio checked', e.target.value)
     setValue(e.target.value)
   }
   const selectOnChange = (value) => {
     console.log(`selected ${value}`)
-  }
-  const selectOnSearch = (value) => {
-    console.log('search:', value)
   }
   return (
     <div className={styles.root}>
@@ -110,45 +108,29 @@ export default function Article() {
           <div className="radio">
             <span>状态：</span>
             <Radio.Group onChange={radioOnChange} value={value}>
-              <Radio value={0}>全部</Radio>
-              <Radio value={1}>草稿</Radio>
-              <Radio value={2}>待审核</Radio>
-              <Radio value={3}>审核通过</Radio>
-              <Radio value={4}>审核失败</Radio>
-              <Radio value={5}>已删除</Radio>
+              <Radio value={-1}>全部</Radio>
+              <Radio value={0}>草稿</Radio>
+              <Radio value={1}>待审核</Radio>
+              <Radio value={2}>审核通过</Radio>
+              <Radio value={3}>审核失败</Radio>
+              <Radio value={4}>已删除</Radio>
             </Radio.Group>
           </div>
           <div className="select">
             <span>频道：</span>
             <Select
-              showSearch
               style={{
                 width: 160,
               }}
               placeholder="请选择文章频道"
-              optionFilterProp="children"
               onChange={selectOnChange}
-              onSearch={selectOnSearch}
-              filterOption={(input, option) =>
-                (option?.label ?? '')
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={[
-                {
-                  value: 'jack',
-                  label: 'Jack',
-                },
-                {
-                  value: 'lucy',
-                  label: 'Lucy',
-                },
-                {
-                  value: 'tom',
-                  label: 'Tom',
-                },
-              ]}
-            />
+            >
+              {channels.map((items) => (
+                <Select.Option key={items.id} value={items.name}>
+                  {items.name}
+                </Select.Option>
+              ))}
+            </Select>
           </div>
           <div className="date">
             <span>日期：</span>
@@ -161,8 +143,8 @@ export default function Article() {
           </Button>
         </div>
       </Card>
-      <Card className="table" title="根据筛选条件共查询到5027条数据">
-        <Table columns={columns} dataSource={data} rowKey="id" />
+      <Card className="table" title={`根据筛选条件共查询到${total}条数据`}>
+        <Table columns={columns} dataSource={list} rowKey="id" />
       </Card>
     </div>
   )
