@@ -15,7 +15,7 @@ import locale from 'antd/es/date-picker/locale/zh_CN'
 import { Link } from 'react-router-dom'
 import styles from './index.module.scss'
 import img404 from '@/assets/eroor.png'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getChannels, getArticles } from '@/store/actions'
 // 优化文章状态的处理
@@ -26,6 +26,7 @@ const ArticleStatus = {
   3: { color: 'red', text: '审核失败' },
 }
 export default function Article() {
+  const paramsRef = useRef({})
   const dispatch = useDispatch()
   const { channels, page, pageSize, list, total } = useSelector(
     (state) => state.article
@@ -95,12 +96,12 @@ export default function Article() {
     if (channel_id !== undefined) {
       params.channel_id = channel_id
     }
+    paramsRef.current = params
     dispatch(getArticles(params))
   }
   const changePage = (page, pageSize) => {
-    const params = {}
-    params.page = page
-    params.per_page = pageSize
+    const params = { ...paramsRef.current, page, per_page: pageSize }
+    console.log(params)
     dispatch(getArticles(params))
   }
   return (
