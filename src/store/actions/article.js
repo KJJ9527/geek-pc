@@ -33,3 +33,10 @@ export const getArticles = (params) => {
     })
   }
 }
+export const delArticles = (id, params) => {
+  return async (dispatch) => {
+    await http.delete(`/mp/articles/${id}`)
+    // 可以继续分发action 来根据筛选条件来获取文章列表数据
+    dispatch(getArticles(params))
+  }
+}

@@ -9,6 +9,7 @@ import {
   Table,
   Tag,
   Form,
+  Modal,
 } from 'antd'
 import 'dayjs/locale/zh-cn'
 import locale from 'antd/es/date-picker/locale/zh_CN'
@@ -17,7 +18,8 @@ import styles from './index.module.scss'
 import img404 from '@/assets/eroor.png'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getChannels, getArticles } from '@/store/actions'
+import { getChannels, getArticles, delArticles } from '@/store/actions'
+const { confirm } = Modal
 // 优化文章状态的处理
 const ArticleStatus = {
   0: { color: 'yellow', text: '草稿' },
@@ -69,12 +71,16 @@ export default function Article() {
     },
     {
       title: '操作',
-      render: (_, record) => (
-        <Space size="middle">
-          <a>编辑 {record.name}</a>
-          <a>删除</a>
-        </Space>
-      ),
+      render: (_, record) => {
+        return (
+          <Space size="middle">
+            <Button>编辑</Button>
+            <Button danger onClick={() => delArticle(record.id)}>
+              删除
+            </Button>
+          </Space>
+        )
+      },
     },
   ]
   const { RangePicker } = DatePicker
@@ -99,10 +105,21 @@ export default function Article() {
     paramsRef.current = params
     dispatch(getArticles(params))
   }
+  // 分页
   const changePage = (page, pageSize) => {
     const params = { ...paramsRef.current, page, per_page: pageSize }
-    console.log(params)
+    paramsRef.current = params
     dispatch(getArticles(params))
+  }
+  // 删除文章
+  const delArticle = (id) => {
+    confirm({
+      title: '温馨提示',
+      content: '是否永久删除该文章？',
+      onOk() {
+        dispatch(delArticles(id,paramsRef.current))
+      },
+    })
   }
   return (
     <div className={styles.root}>

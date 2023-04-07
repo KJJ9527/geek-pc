@@ -14,8 +14,7 @@ import Article from '../Article'
 import Publish from '../Publish'
 import styles from './index.module.scss'
 import { useEffect } from 'react'
-const { Header, Content, Footer, Sider } = Layout
-
+const { Header, Content, Sider } = Layout
 const items = [
   { icon: HomeOutlined, label: '数据概览', id: '/home' },
   { icon: EditOutlined, label: '内容管理', id: '/home/article' },
