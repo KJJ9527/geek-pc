@@ -116,8 +116,9 @@ export default function Article() {
     confirm({
       title: '温馨提示',
       content: '是否永久删除该文章？',
-      onOk() {
-        dispatch(delArticles(id,paramsRef.current))
+      async onOk() {
+        await dispatch(delArticles(id))
+        await dispatch(getArticles(paramsRef.current))
       },
     })
   }
