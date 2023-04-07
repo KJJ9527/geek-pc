@@ -8,10 +8,10 @@ import {
   Button,
   Table,
   Tag,
+  Form,
 } from 'antd'
 import 'dayjs/locale/zh-cn'
 import locale from 'antd/es/date-picker/locale/zh_CN'
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './index.module.scss'
 import img404 from '@/assets/eroor.png'
@@ -30,7 +30,6 @@ export default function Article() {
   const { channels, page, pageSize, list, total } = useSelector(
     (state) => state.article
   )
-  const [value, setValue] = useState(-1)
   const columns = [
     {
       title: '封面',
@@ -82,15 +81,34 @@ export default function Article() {
     dispatch(getChannels())
     dispatch(getArticles({}))
   }, [dispatch])
-  const radioOnChange = (e) => {
-    setValue(e.target.value)
+  // 筛选数据
+  const onSearch = (values) => {
+    const { channel_id, date, status } = values
+    const params = {}
+    if (status !== -1) {
+      params.status = status
+    }
+    if (date !== undefined && date !== null) {
+      params.begin_pubdate = date[0].format('YYYY-MM-DD HH:mm:ss')
+      params.end_pubdate = date[1].format('YYYY-MM-DD HH:mm:ss')
+    }
+    if (channel_id !== undefined) {
+      params.channel_id = channel_id
+    }
+    dispatch(getArticles(params))
   }
-  const selectOnChange = (value) => {
-    console.log(`selected ${value}`)
+  const changePage = (page, pageSize) => {
+    const params = {}
+    params.page = page
+    params.per_page = pageSize
+    dispatch(getArticles(params))
   }
   return (
     <div className={styles.root}>
       <Card
+        style={{
+          paddingTop: '40px',
+        }}
         title={
           <Breadcrumb
             items={[
@@ -104,10 +122,13 @@ export default function Article() {
           />
         }
       >
-        <div className="filter">
-          <div className="radio">
-            <span>状态：</span>
-            <Radio.Group onChange={radioOnChange} value={value}>
+        <Form
+          className="filter"
+          initialValues={{ status: -1 }}
+          onFinish={onSearch}
+        >
+          <Form.Item label="状态：" name="status" className="radio">
+            <Radio.Group>
               <Radio value={-1}>全部</Radio>
               <Radio value={0}>草稿</Radio>
               <Radio value={1}>待审核</Radio>
@@ -115,36 +136,49 @@ export default function Article() {
               <Radio value={3}>审核失败</Radio>
               <Radio value={4}>已删除</Radio>
             </Radio.Group>
-          </div>
-          <div className="select">
-            <span>频道：</span>
+          </Form.Item>
+          <Form.Item label="频道：" name="channel_id" className="select">
             <Select
               style={{
                 width: 160,
               }}
               placeholder="请选择文章频道"
-              onChange={selectOnChange}
             >
               {channels.map((items) => (
-                <Select.Option key={items.id} value={items.name}>
+                <Select.Option key={items.id} value={items.id}>
                   {items.name}
                 </Select.Option>
               ))}
             </Select>
-          </div>
-          <div className="date">
-            <span>日期：</span>
-            <Space size={12}>
-              <RangePicker locale={locale} />
-            </Space>
-          </div>
-          <Button className="filterBtn" type="primary" block="false">
-            筛选
-          </Button>
-        </div>
+          </Form.Item>
+          <Form.Item label="日期：" name="date" className="date">
+            <RangePicker locale={locale} />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              className="filterBtn"
+              type="primary"
+              block="false"
+              htmlType="submit"
+            >
+              筛选
+            </Button>
+          </Form.Item>
+        </Form>
       </Card>
       <Card className="table" title={`根据筛选条件共查询到${total}条数据`}>
-        <Table columns={columns} dataSource={list} rowKey="id" />
+        <Table
+          columns={columns}
+          dataSource={list}
+          rowKey="id"
+          pagination={{
+            position: ['bottomCenter'],
+            current: page,
+            pageSize,
+            total,
+            onChange: changePage,
+          }}
+        />
       </Card>
     </div>
   )

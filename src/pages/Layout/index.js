@@ -48,8 +48,16 @@ export default function GeekLayout() {
     history.push('/login')
   }
   return (
-    <Layout className={styles.root}>
-      <Sider>
+    <Layout className={styles.root} hasSider>
+      <Sider
+        className="sider"
+        style={{
+          position: 'fixed',
+          left: 0,
+          height: '100%',
+          zIndex: 2,
+        }}
+      >
         <div className="logo">
           <h2>极客园</h2>
         </div>
@@ -65,9 +73,13 @@ export default function GeekLayout() {
       </Sider>
       <Layout>
         <Header
-          className="header"
           style={{
+            position: 'fixed',
+            top: 0,
+            zIndex: 1,
+            width: '100%',
             background: colorBgContainer,
+            borderBottom:'1px solid #ddd',
           }}
         >
           <div className="content">
@@ -90,8 +102,9 @@ export default function GeekLayout() {
           <div
             style={{
               padding: 24,
+              paddingLeft: 200,
               minHeight: 360,
-              // background: colorBgContainer,
+              background: colorBgContainer,
             }}
           >
             <Route exact path="/home" component={Home} />
@@ -99,13 +112,6 @@ export default function GeekLayout() {
             <Route path="/home/publish" component={Publish} />
           </div>
         </Content>
-        <Footer
-          style={{
-            textAlign: 'center',
-          }}
-        >
-          极客园 ©2023
-        </Footer>
       </Layout>
     </Layout>
   )
