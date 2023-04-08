@@ -2,7 +2,6 @@ import {
   Card,
   Breadcrumb,
   Radio,
-  Select,
   DatePicker,
   Space,
   Button,
@@ -19,6 +18,7 @@ import img404 from '@/assets/eroor.png'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getChannels, getArticles, delArticles } from '@/store/actions'
+import { Channels } from '@/components/Channels'
 const { confirm } = Modal
 // 优化文章状态的处理
 const ArticleStatus = {
@@ -31,7 +31,7 @@ export default function Article() {
   const history = useHistory()
   const paramsRef = useRef({})
   const dispatch = useDispatch()
-  const { channels, page, pageSize, list, total } = useSelector(
+  const {  page, pageSize, list, total } = useSelector(
     (state) => state.article
   )
   const columns = [
@@ -157,18 +157,7 @@ export default function Article() {
             </Radio.Group>
           </Form.Item>
           <Form.Item label="频道：" name="channel_id" className="select">
-            <Select
-              style={{
-                width: 160,
-              }}
-              placeholder="请选择文章频道"
-            >
-              {channels.map((items) => (
-                <Select.Option key={items.id} value={items.id}>
-                  {items.name}
-                </Select.Option>
-              ))}
-            </Select>
+            <Channels />
           </Form.Item>
           <Form.Item label="日期：" name="date" className="date">
             <RangePicker locale={locale} />
