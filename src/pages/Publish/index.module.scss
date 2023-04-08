@@ -1,0 +1,10 @@
+.root {
+  :global {
+    .publish-quill {
+      width: 1200px;
+      .ql-editor {
+        min-height: 300px;
+      }
+    }
+  }
+}

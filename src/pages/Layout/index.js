@@ -30,13 +30,16 @@ export default function GeekLayout() {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
+  // 对 /home/publish/id url 地址进行特殊处理
+  const menuSelectedKey = location.pathname.startsWith('/home/publish')
+    ? '/home/publish'
+    : location.pathname
   // 分发状态
   useEffect(() => {
     dispatch(getUserInfo())
   }, [dispatch])
   // 拿到状态
   const { name } = useSelector((state) => state.user)
-
   const {
     token: { colorBgContainer },
   } = theme.useToken()
@@ -63,7 +66,11 @@ export default function GeekLayout() {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={[location.pathname]}
+          // 注意：defaultSelectedKeys属性，只会在组件第一次渲染时生效
+          // 但是，当location.pathname改变时，那么，虽然location.pathname值变了
+          // 但是，defaultSelectedKeys不再生效，因此，菜单高亮就有问题了
+          // defaultSelectedKeys={[location.pathname]}
+          selectedKeys={[menuSelectedKey]}
           items={items}
           onClick={(e) => {
             history.push(e.key)
@@ -78,10 +85,10 @@ export default function GeekLayout() {
             zIndex: 1,
             width: '100%',
             background: colorBgContainer,
-            borderBottom:'1px solid #ddd',
+            borderBottom: '1px solid #ddd',
           }}
         >
-          <div className="content">
+          <div className="headerContent">
             <span className="username">欢迎:{name}</span>
             <Popconfirm
               placement="bottom"
@@ -98,17 +105,18 @@ export default function GeekLayout() {
           </div>
         </Header>
         <Content>
-          <div
-            style={{
-              padding: 24,
-              paddingLeft: 200,
-              minHeight: 360,
-              background: colorBgContainer,
-            }}
-          >
+          <div className="content">
             <Route exact path="/home" component={Home} />
             <Route path="/home/article" component={Article} />
-            <Route path="/home/publish" component={Publish} />
+            {/* 
+              /home/publish/:id 其中 :id 表示路由参数
+              /home/publish/:id 其中 ? 表示路由参数是可选的
+              这个路由可以匹配以下格式的 url地址:
+              /home/publish
+              /home/publish/123
+              /home/publish/abc
+            */}
+            <Route path="/home/publish/:id?" component={Publish} />
           </div>
         </Content>
       </Layout>

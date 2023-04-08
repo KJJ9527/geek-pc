@@ -13,7 +13,7 @@ import {
 } from 'antd'
 import 'dayjs/locale/zh-cn'
 import locale from 'antd/es/date-picker/locale/zh_CN'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styles from './index.module.scss'
 import img404 from '@/assets/eroor.png'
 import { useEffect, useRef } from 'react'
@@ -28,6 +28,7 @@ const ArticleStatus = {
   3: { color: 'red', text: '审核失败' },
 }
 export default function Article() {
+  const history = useHistory()
   const paramsRef = useRef({})
   const dispatch = useDispatch()
   const { channels, page, pageSize, list, total } = useSelector(
@@ -71,11 +72,13 @@ export default function Article() {
     },
     {
       title: '操作',
-      render: (_, record) => {
+      render: (data) => {
         return (
           <Space size="middle">
-            <Button>编辑</Button>
-            <Button danger onClick={() => delArticle(record.id)}>
+            <Button onClick={() => history.push(`/home/publish/${data.id}`)}>
+              编辑
+            </Button>
+            <Button danger onClick={() => delArticle(data.id)}>
               删除
             </Button>
           </Space>
@@ -125,9 +128,6 @@ export default function Article() {
   return (
     <div className={styles.root}>
       <Card
-        style={{
-          paddingTop: '40px',
-        }}
         title={
           <Breadcrumb
             items={[
