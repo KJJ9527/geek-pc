@@ -1,4 +1,13 @@
-import { Card, Breadcrumb, Form, Input, Button, Radio, Upload } from 'antd'
+import {
+  Card,
+  Breadcrumb,
+  Form,
+  Input,
+  Button,
+  Radio,
+  Upload,
+  message,
+} from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import ReactQuill from 'react-quill'
@@ -6,8 +15,14 @@ import 'react-quill/dist/quill.snow.css'
 import styles from './index.module.scss'
 import { Channels } from '@/components/Channels'
 import { useState, useRef } from 'react'
-
+import { useDispatch } from 'react-redux'
+import { updateArticles } from '@/store/actions'
+import { useHistory } from 'react-router-dom'
 export default function Publish() {
+  // 创建form实例
+  const [form] = Form.useForm()
+  const dispatch = useDispatch()
+  const history = useHistory()
   // fileList 用来表示已上传的文件列表(图片列表数据)
   // 可以上传多张图片，所以它的值是一个数组
   const [fileList, setFileList] = useState([])
@@ -45,10 +60,30 @@ export default function Publish() {
     setMaxImgCount(count)
   }
   // 表单提交
-  const onFinish = ({ type, ...values }) => {
+  const onFinish = async ({ type, ...values }) => {
     // 对数据进行处理
     const data = {
       ...values,
+      cover: {
+        type,
+        images: fileList.map((item) => item.url),
+      },
+    }
+    try {
+      await dispatch(updateArticles(data))
+      message.success('发表成功！', 1, () => {
+        history.push('/home/article')
+      })
+    } catch (e) {
+      console.dir('发表失败', e)
+    }
+  }
+  // 存入草稿
+  const saveDraft = async () => {
+    const value = await form.validateFields()
+    const { type, ...restValues } = value
+    const data = {
+      ...restValues,
       cover: {
         type,
         images: fileList.map((item) => item.url),
@@ -79,6 +114,7 @@ export default function Publish() {
         labelCol={{ span: 4 }}
         onFinish={(values) => onFinish(values)}
         initialValues={{ type: 1, content: '' }}
+        form={form}
       >
         <Form.Item
           name="title"
@@ -164,7 +200,7 @@ export default function Publish() {
           <Button type="primary" htmlType="submit">
             发布文章
           </Button>
-          <Button>存入草稿</Button>
+          <Button onClick={saveDraft}>存入草稿</Button>
         </Form.Item>
       </Form>
     </Card>
