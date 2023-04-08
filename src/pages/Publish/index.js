@@ -1,32 +1,28 @@
-import {
-  Card,
-  Breadcrumb,
-  Form,
-  Input,
-  Button,
-  Radio,
-  Upload,
-  message,
-} from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
+import { Card, Breadcrumb, Form, Input, Button, Radio, Upload } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import styles from './index.module.scss'
 import { Channels } from '@/components/Channels'
-const props = {
-  beforeUpload: (file) => {
-    const isPNG = file.type === 'image/png'
-    if (!isPNG) {
-      message.error(`${file.name} 不是图片文件格式`)
-    }
-    return isPNG || Upload.LIST_IGNORE
-  },
-  onChange: (info) => {
-    console.log(info.fileList)
-  },
-}
+import { useState } from 'react'
+
 export default function Publish() {
+  // fileList 用来表示已上传的文件列表(图片列表数据)
+  // 可以上传多张图片，所以它的值是一个数组
+  const [fileList, setFileList] = useState([])
+  const onUploadChange = (data) => {
+    const newFileList = data.fileList.map((file) => {
+      if (file.response) {
+        return {
+          url: file.response.data.url,
+        }
+      } else {
+        return file
+      }
+    })
+    setFileList(newFileList)
+  }
   return (
     <Card
       className={styles.root}
@@ -67,7 +63,7 @@ export default function Publish() {
             },
           ]}
         >
-          <Channels width={400}/>
+          <Channels width={400} />
         </Form.Item>
         <Form.Item
           label="封面"
@@ -84,9 +80,25 @@ export default function Publish() {
               <Radio value={0}>无图</Radio>
             </Radio.Group>
           </Form.Item>
-          <Upload {...props}>
-            <Button icon={<UploadOutlined />}>上传图片</Button>
-          </Upload>
+          <>
+            <Upload
+              name="image"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList
+              action="http://geek.itheima.net/v1_0/upload"
+              // 多选
+              multiple
+              // 已经上传的文件列表，设置该属性后组件变为受控
+              fileList={fileList}
+              // 上传文件改变时的回调
+              onChange={onUploadChange}
+            >
+              <div style={{ marginTop: 8 }}>
+                <PlusOutlined />
+              </div>
+            </Upload>
+          </>
         </Form.Item>
         <Form.Item
           label="内容"
