@@ -1,7 +1,7 @@
 import { http } from '@/utils'
 // 发布文章
-export const updateArticles = (data) => {
+export const updateArticles = (data, isDraft) => {
   return async () => {
-    await http.post('/mp/articles', data)
+    await http.post(`/mp/articles?draft=${isDraft}`, data)
   }
 }

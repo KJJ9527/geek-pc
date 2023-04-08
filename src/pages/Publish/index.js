@@ -59,29 +59,11 @@ export default function Publish() {
     // 更新数量状态
     setMaxImgCount(count)
   }
-  // 表单提交
-  const onFinish = async ({ type, ...values }) => {
-    // 对数据进行处理
-    const data = {
-      ...values,
-      cover: {
-        type,
-        images: fileList.map((item) => item.url),
-      },
-    }
-    try {
-      await dispatch(updateArticles(data))
-      message.success('发表成功！', 1, () => {
-        history.push('/home/article')
-      })
-    } catch (e) {
-      console.dir('发表失败', e)
-    }
-  }
-  // 存入草稿
-  const saveDraft = async () => {
-    const value = await form.validateFields()
-    const { type, ...restValues } = value
+
+  // 发布或草稿的函数
+  const saveArticles = async (values, sucMsg, errMsg, isDraft) => {
+    const { type, ...restValues } = values
+    // 对数据进行处理,拿到图片url
     const data = {
       ...restValues,
       cover: {
@@ -89,7 +71,25 @@ export default function Publish() {
         images: fileList.map((item) => item.url),
       },
     }
-    console.log(data)
+    try {
+      await dispatch(updateArticles(data, isDraft))
+      message.success(sucMsg, 1, () => {
+        history.push('/home/article')
+      })
+    } catch (e) {
+      console.dir(errMsg, e)
+    }
+  }
+
+  // 表单提交
+  const onFinish = async (values) => {
+    await saveArticles(values, '发表成功！', '发表失败！', false)
+  }
+  // 存入草稿
+  const saveDraft = async () => {
+    const values = await form.validateFields()
+    console.log('草稿的values', values)
+    await saveArticles(values, '存入草稿成功！', '存入草稿失败', true)
   }
   return (
     <Card
