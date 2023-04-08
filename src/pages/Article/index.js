@@ -31,9 +31,7 @@ export default function Article() {
   const history = useHistory()
   const paramsRef = useRef({})
   const dispatch = useDispatch()
-  const {  page, pageSize, list, total } = useSelector(
-    (state) => state.article
-  )
+  const { page, pageSize, list, total } = useSelector((state) => state.article)
   const columns = [
     {
       title: '封面',
@@ -156,10 +154,10 @@ export default function Article() {
               <Radio value={4}>已删除</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label="频道：" name="channel_id" className="select">
-            <Channels />
+          <Form.Item label="频道：" name="channel_id">
+            <Channels width={288}/>
           </Form.Item>
-          <Form.Item label="日期：" name="date" className="date">
+          <Form.Item label="日期：" name="date">
             <RangePicker locale={locale} />
           </Form.Item>
           <Form.Item>

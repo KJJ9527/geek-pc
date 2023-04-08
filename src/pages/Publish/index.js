@@ -7,13 +7,13 @@ import {
   Radio,
   Upload,
   message,
-  Select,
 } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import styles from './index.module.scss'
+import { Channels } from '@/components/Channels'
 const props = {
   beforeUpload: (file) => {
     const isPNG = file.type === 'image/png'
@@ -46,10 +46,7 @@ export default function Publish() {
         width: '100%',
       }}
     >
-      <Form
-        labelCol={{ span: 4 }}
-        initialValues={{ type: 1, content: '' }}
-      >
+      <Form labelCol={{ span: 4 }} initialValues={{ type: 1, content: '' }}>
         <Form.Item
           name="title"
           label="标题"
@@ -70,26 +67,7 @@ export default function Publish() {
             },
           ]}
         >
-          <Select
-            style={{
-              width: 120,
-            }}
-            options={[
-              {
-                value: 'jack',
-                label: 'Jack',
-              },
-              {
-                value: 'lucy',
-                label: 'Lucy',
-              },
-              {
-                value: 'Yiminghe',
-                label: 'yiminghe',
-              },
-            ]}
-            placeholder="请选择文章频道"
-          />
+          <Channels width={400}/>
         </Form.Item>
         <Form.Item
           label="封面"
