@@ -36,12 +36,11 @@ export default function Publish() {
   // 是否是编辑文章
   const isEdit = Boolean(articleId)
 
-  // 编辑进来页面，一开始就获取数据
+  // 是否是编辑进来页面
   useEffect(() => {
     const loadData = async () => {
       if (!isEdit) return
       const detail = await dispatch(getArticleById(articleId))
-      console.log(detail)
       const {
         channel_id,
         content,
@@ -58,6 +57,7 @@ export default function Publish() {
       const newFileList = images.map((item) => {
         return { url: item }
       })
+
       // 设置图片回显
       setFileList(newFileList)
       // 设置最大上传数量
@@ -100,6 +100,9 @@ export default function Publish() {
 
   // 发布或草稿的函数
   const saveArticles = async (values, sucMsg, errMsg, isDraft) => {
+    if (values.type !== fileList.length) {
+      return message.warning('封面数量与所选类型不匹配！', 1.5)
+    }
     const { type, ...restValues } = values
     // 对数据进行处理,拿到图片url
     const data = {
@@ -109,8 +112,12 @@ export default function Publish() {
         images: fileList.map((item) => item.url),
       },
     }
+    // 编辑时添加id选项
+    if (isEdit) {
+      data.id = articleId
+    }
     try {
-      await dispatch(updateArticles(data, isDraft))
+      await dispatch(updateArticles(data, isDraft, isEdit))
       message.success(sucMsg, 1, () => {
         history.push('/home/article')
       })
@@ -119,15 +126,19 @@ export default function Publish() {
     }
   }
 
-  // 表单提交
+  // 表单提交 -发布文章或编辑文章
   const onFinish = async (values) => {
-    await saveArticles(values, '发表成功！', '发表失败！', false)
+    await saveArticles(
+      values,
+      isEdit ? '编辑成功 !' : '发表成功！',
+      isEdit ? '编辑失败 !' : '发表失败！',
+      false
+    )
   }
-  // 存入草稿
+  // 存入草稿 -发布时存入草稿和编辑时存入草稿
   const saveDraft = async () => {
     const values = await form.validateFields()
-    console.log('草稿的values', values)
-    await saveArticles(values, '存入草稿成功！', '存入草稿失败', true)
+    await saveArticles(values, '存入草稿成功！', '存入草稿失败！', true)
   }
   return (
     <Card
