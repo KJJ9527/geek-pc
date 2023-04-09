@@ -4,11 +4,19 @@ import { useDispatch } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import { login } from '@/store/actions'
 import styles from './index.module.scss'
+import { useState } from 'react'
 export default function Login() {
   const dispatch = useDispatch()
   const history = useHistory()
   const location = useLocation()
+  const [checked, setChecked] = useState(false)
+  const onChange = (e) => {
+    setChecked(e.target.checked)
+  }
   const onFinish = async (values) => {
+    if (!checked) {
+      return message.warning('请先确定用户协议和隐私条款',1)
+    }
     try {
       await dispatch(login({ mobile: values.mobile, code: values.code }))
       message.success('登录成功！', 1.5, () => {
@@ -72,7 +80,9 @@ export default function Login() {
             />
           </Form.Item>
           <Form.Item valuePropName="checked">
-            <Checkbox>我已阅读并同意「用户协议」和「隐私条款」</Checkbox>
+            <Checkbox onChange={onChange}>
+              我已阅读并同意「用户协议」和「隐私条款」
+            </Checkbox>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block={true}>
