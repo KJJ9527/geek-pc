@@ -14,9 +14,9 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import styles from './index.module.scss'
 import { Channels } from '@/components/Channels'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { updateArticles } from '@/store/actions'
+import { updateArticles, getArticleById } from '@/store/actions'
 import { useHistory } from 'react-router-dom'
 export default function Publish() {
   // 创建form实例
@@ -32,9 +32,42 @@ export default function Publish() {
   // useRef保存更新状态的图片数量
   const imgRef = useRef([])
   // 路由id
-  const { id: routerId } = useParams()
+  const { id: articleId } = useParams()
   // 是否是编辑文章
-  const isEdit = Boolean(routerId)
+  const isEdit = Boolean(articleId)
+
+  // 编辑进来页面，一开始就获取数据
+  useEffect(() => {
+    const loadData = async () => {
+      if (!isEdit) return
+      const detail = await dispatch(getArticleById(articleId))
+      console.log(detail)
+      const {
+        channel_id,
+        content,
+        title,
+        cover: { type, images },
+      } = detail
+      // 将数据回显到 Form表单中
+      form.setFieldsValue({
+        channel_id,
+        content,
+        title,
+        type,
+      })
+      const newFileList = images.map((item) => {
+        return { url: item }
+      })
+      // 设置图片回显
+      setFileList(newFileList)
+      // 设置最大上传数量
+      setMaxImgCount(type)
+      // 将图片数据存储到 ref
+      imgRef.current = newFileList
+    }
+    loadData()
+  }, [dispatch, isEdit, articleId, form])
+
   // 上传文件改变时的回调
   const onUploadChange = (data) => {
     const newFileList = data.fileList.map((file) => {
@@ -118,6 +151,7 @@ export default function Publish() {
       <Form
         labelCol={{ span: 4 }}
         onFinish={(values) => onFinish(values)}
+        // Form表单的 initialValues 仅仅是用来设置默认值，无法动态设置表单中的数据
         initialValues={{ type: 1, content: '' }}
         form={form}
       >

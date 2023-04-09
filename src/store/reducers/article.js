@@ -1,4 +1,4 @@
-const initState = {
+const initiaState = {
   // 频道数据
   channels: [],
   page:1,
@@ -6,7 +6,7 @@ const initState = {
   list:[],
   total:1,
 }
-export const article = (state = initState, action) => {
+export const article = (state = initiaState, action) => {
   switch (action.type) {
     case 'article/setChannels':
       return {
