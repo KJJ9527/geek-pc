@@ -1,3 +1,4 @@
+import { lazy, Suspense, useEffect } from 'react'
 import {
   HomeOutlined,
   EditOutlined,
@@ -9,11 +10,13 @@ import React from 'react'
 import { Route, useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserInfo, logout } from '@/store/actions'
-import Home from '../Home'
-import Article from '../Article'
-import Publish from '../Publish'
 import styles from './index.module.scss'
-import { useEffect } from 'react'
+
+// 懒加载
+const Home = lazy(() => import('../Home'))
+const Article = lazy(() => import('../Article'))
+const Publish = lazy(() => import('../Publish'))
+
 const { Header, Content, Sider } = Layout
 const items = [
   { icon: HomeOutlined, label: '数据概览', id: '/home' },
@@ -51,64 +54,65 @@ export default function GeekLayout() {
   }
   return (
     <Layout className={styles.root} hasSider>
-      <Sider
-        className="sider"
-        style={{
-          position: 'fixed',
-          left: 0,
-          height: '100%',
-          zIndex: 2,
-        }}
-      >
-        <div className="logo">
-          <h2>极客园</h2>
-        </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          // 注意：defaultSelectedKeys属性，只会在组件第一次渲染时生效
-          // 但是，当location.pathname改变时，那么，虽然location.pathname值变了
-          // 但是，defaultSelectedKeys不再生效，因此，菜单高亮就有问题了
-          // defaultSelectedKeys={[location.pathname]}
-          selectedKeys={[menuSelectedKey]}
-          items={items}
-          onClick={(e) => {
-            history.push(e.key)
-          }}
-        />
-      </Sider>
-      <Layout>
-        <Header
+      <Suspense fallback="loading...">
+        <Sider
+          className="sider"
           style={{
             position: 'fixed',
-            top: 0,
-            zIndex: 1,
-            width: '100%',
-            background: colorBgContainer,
-            borderBottom: '1px solid #ddd',
+            left: 0,
+            height: '100%',
+            zIndex: 2,
           }}
         >
-          <div className="headerContent">
-            <span className="username">欢迎:{name}</span>
-            <Popconfirm
-              placement="bottom"
-              title="确定要退出吗？"
-              onConfirm={confirm}
-              okText="确定"
-              cancelText="取消"
-            >
-              <Button className="closebtn">
-                退出
-                <CloseCircleOutlined />
-              </Button>
-            </Popconfirm>
+          <div className="logo">
+            <h2>极客园</h2>
           </div>
-        </Header>
-        <Content>
-          <div className="content">
-            <Route exact path="/home" component={Home} />
-            <Route path="/home/article" component={Article} />
-            {/* 
+          <Menu
+            theme="dark"
+            mode="inline"
+            // 注意：defaultSelectedKeys属性，只会在组件第一次渲染时生效
+            // 但是，当location.pathname改变时，那么，虽然location.pathname值变了
+            // 但是，defaultSelectedKeys不再生效，因此，菜单高亮就有问题了
+            // defaultSelectedKeys={[location.pathname]}
+            selectedKeys={[menuSelectedKey]}
+            items={items}
+            onClick={(e) => {
+              history.push(e.key)
+            }}
+          />
+        </Sider>
+        <Layout>
+          <Header
+            style={{
+              position: 'fixed',
+              top: 0,
+              zIndex: 1,
+              width: '100%',
+              background: colorBgContainer,
+              borderBottom: '1px solid #ddd',
+            }}
+          >
+            <div className="headerContent">
+              <span className="username">欢迎:{name}</span>
+              <Popconfirm
+                placement="bottom"
+                title="确定要退出吗？"
+                onConfirm={confirm}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Button className="closebtn">
+                  退出
+                  <CloseCircleOutlined />
+                </Button>
+              </Popconfirm>
+            </div>
+          </Header>
+          <Content>
+            <div className="content">
+              <Route exact path="/home" component={Home} />
+              <Route path="/home/article" component={Article} />
+              {/* 
               /home/publish/:id 其中 :id 表示路由参数
               /home/publish/:id 其中 ? 表示路由参数是可选的
               这个路由可以匹配以下格式的 url地址:
@@ -116,10 +120,11 @@ export default function GeekLayout() {
               /home/publish/123
               /home/publish/abc
             */}
-            <Route path="/home/publish/:id?" component={Publish} />
-          </div>
-        </Content>
-      </Layout>
+              <Route path="/home/publish/:id?" component={Publish} />
+            </div>
+          </Content>
+        </Layout>
+      </Suspense>
     </Layout>
   )
 }
