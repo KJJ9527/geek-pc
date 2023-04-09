@@ -133,7 +133,7 @@ export default function Article() {
                 title: <Link to="/home">首页</Link>,
               },
               {
-                title: <Link to="/home/article">内容管理</Link>,
+                title: '内容管理',
               },
             ]}
           />
@@ -155,7 +155,7 @@ export default function Article() {
             </Radio.Group>
           </Form.Item>
           <Form.Item label="频道：" name="channel_id">
-            <Channels width={288}/>
+            <Channels width={288} />
           </Form.Item>
           <Form.Item label="日期：" name="date">
             <RangePicker locale={locale} />

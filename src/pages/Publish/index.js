@@ -9,7 +9,7 @@ import {
   message,
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import styles from './index.module.scss'
@@ -21,6 +21,7 @@ import { useHistory } from 'react-router-dom'
 export default function Publish() {
   // 创建form实例
   const [form] = Form.useForm()
+
   const dispatch = useDispatch()
   const history = useHistory()
   // fileList 用来表示已上传的文件列表(图片列表数据)
@@ -30,6 +31,10 @@ export default function Publish() {
   const [maxImgCount, setMaxImgCount] = useState(1)
   // useRef保存更新状态的图片数量
   const imgRef = useRef([])
+  // 路由id
+  const { id: routerId } = useParams()
+  // 是否是编辑文章
+  const isEdit = Boolean(routerId)
   // 上传文件改变时的回调
   const onUploadChange = (data) => {
     const newFileList = data.fileList.map((file) => {
@@ -101,7 +106,7 @@ export default function Publish() {
               title: <Link to="/home">首页</Link>,
             },
             {
-              title: <Link to="/home/publish">内容管理</Link>,
+              title: isEdit ? '编辑文章' : '发表文章',
             },
           ]}
         />
@@ -198,7 +203,7 @@ export default function Publish() {
           }}
         >
           <Button type="primary" htmlType="submit">
-            发布文章
+            {isEdit ? '编辑文章' : '发表文章'}
           </Button>
           <Button onClick={saveDraft}>存入草稿</Button>
         </Form.Item>
