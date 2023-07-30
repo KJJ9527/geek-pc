@@ -33,7 +33,7 @@ export default function Login() {
   };
   return (
     <div className={styles.root}>
-      <Card className="login-wrapper" title="极客园222" bordered={false}>
+      <Card className="login-wrapper" title="极客园" bordered={false}>
         <Form
           size="large"
           validateTrigger={["onBlur", "onChange"]}
