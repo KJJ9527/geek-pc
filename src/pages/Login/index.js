@@ -1,42 +1,42 @@
-import { Card, Input, Button, Checkbox, Form, message } from 'antd'
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { useDispatch } from 'react-redux'
-import { useHistory, useLocation } from 'react-router-dom'
-import { login } from '@/store/actions'
-import styles from './index.module.scss'
-import { useState } from 'react'
+import { Card, Input, Button, Checkbox, Form, message } from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
+import { login } from "@/store/actions";
+import styles from "./index.module.scss";
+import { useState } from "react";
 export default function Login() {
-  const dispatch = useDispatch()
-  const history = useHistory()
-  const location = useLocation()
-  const [checked, setChecked] = useState(false)
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const location = useLocation();
+  const [checked, setChecked] = useState(false);
   const onChange = (e) => {
-    setChecked(e.target.checked)
-  }
+    setChecked(e.target.checked);
+  };
   const onFinish = async (values) => {
     if (!checked) {
-      return message.warning('请先确定用户协议和隐私条款',1)
+      return message.warning("请先确定用户协议和隐私条款", 1);
     }
     try {
-      await dispatch(login({ mobile: values.mobile, code: values.code }))
-      message.success('登录成功！', 1.5, () => {
-        history.replace(location?.state?.from ?? '/home')
-      })
+      await dispatch(login({ mobile: values.mobile, code: values.code }));
+      message.success("登录成功！", 1.5, () => {
+        history.replace(location?.state?.from ?? "/home");
+      });
     } catch (e) {
       message.warning(
         e.response
-          ? e.response?.data?.message ?? '出错了~'
-          : '网络繁忙，请稍后再试',
+          ? e.response?.data?.message ?? "出错了~"
+          : "网络繁忙，请稍后再试",
         1.5
-      )
+      );
     }
-  }
+  };
   return (
     <div className={styles.root}>
-      <Card className="login-wrapper" title="极客园" bordered={false}>
+      <Card className="login-wrapper" title="极客园222" bordered={false}>
         <Form
           size="large"
-          validateTrigger={['onBlur', 'onChange']}
+          validateTrigger={["onBlur", "onChange"]}
           onFinish={onFinish}
         >
           <Form.Item
@@ -44,12 +44,12 @@ export default function Login() {
             rules={[
               {
                 pattern: /^1[3-9]\d{9}$/,
-                message: '手机号码格式有误',
-                validateTrigger: 'onBlur',
+                message: "手机号码格式有误",
+                validateTrigger: "onBlur",
               },
               {
                 required: true,
-                message: '请输入手机号',
+                message: "请输入手机号",
               },
             ]}
           >
@@ -64,12 +64,12 @@ export default function Login() {
             rules={[
               {
                 len: 6,
-                message: '验证码6个字符',
-                validateTrigger: 'onBlur',
+                message: "验证码6个字符",
+                validateTrigger: "onBlur",
               },
               {
                 required: true,
-                message: '请输入验证码',
+                message: "请输入验证码",
               },
             ]}
           >
@@ -92,5 +92,5 @@ export default function Login() {
         </Form>
       </Card>
     </div>
-  )
+  );
 }
